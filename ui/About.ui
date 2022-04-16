@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutUs</class>
+ <widget class="QWidget" name="AboutUs">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>About Us</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>images/about_us.png</normaloff>images/about_us.png</iconset>
+  </property>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

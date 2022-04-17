@@ -11,36 +11,53 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Help</string>
+   <string>User Manual</string>
   </property>
   <property name="windowIcon">
    <iconset>
     <normaloff>images/help.png</normaloff>images/help.png</iconset>
   </property>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QLabel" name="UserManual_topic">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>100</y>
-     <width>75</width>
-     <height>24</height>
+     <x>270</x>
+     <y>30</y>
+     <width>141</width>
+     <height>41</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>User Manual</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QLabel" name="manual_pic">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>240</y>
-     <width>75</width>
-     <height>24</height>
+     <x>220</x>
+     <y>30</y>
+     <width>41</width>
+     <height>41</height>
     </rect>
    </property>
+   <property name="maximumSize">
+    <size>
+     <width>41</width>
+     <height>41</height>
+    </size>
+   </property>
    <property name="text">
-    <string>PushButton</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>images/manual.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

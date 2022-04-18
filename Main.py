@@ -11,7 +11,12 @@ class MainWindow(QMainWindow):
         uic.loadUi("ui/MainCal.ui", self)
         self.actionHelp.triggered.connect(self.help_clicked)
         self.actionAbout_US.triggered.connect(self.about_clicked)
-        self.case1.toggled.clicked(self.case1_selected)
+        self.case1.clicked.connect(self.check)
+        self.case2.clicked.connect(self.check)
+        self.case3.clicked.connect(self.check)
+        self.case4.clicked.connect(self.check)
+        self.case5.clicked.connect(self.check)
+        self.case6.clicked.connect(self.check)
 
     def help_clicked(self):
         self.help_w.show()
@@ -19,9 +24,19 @@ class MainWindow(QMainWindow):
     def about_clicked(self):
         self.about_w.show()
 
-
-    def case1_selected(self):
-        testlabel.
+    def check(self):
+        if self.case1.isChecked():
+            self.testlabel.setText("1")
+        elif self.case2.isChecked():
+            self.testlabel.setText("2")
+        elif self.case3.isChecked():
+            self.testlabel.setText("3")
+        elif self.case4.isChecked():
+            self.testlabel.setText("4")
+        elif self.case5.isChecked():
+            self.testlabel.setText("5")
+        elif self.case6.isChecked():
+            self.testlabel.setText("6")
 
 
 class HelpWindow(QWidget):

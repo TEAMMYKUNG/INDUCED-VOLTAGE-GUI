@@ -11,12 +11,17 @@ class MainWindow(QMainWindow):
         uic.loadUi("ui/MainCal.ui", self)
         self.actionHelp.triggered.connect(self.help_clicked)
         self.actionAbout_US.triggered.connect(self.about_clicked)
+        self.case1.toggled.clicked(self.case1_selected)
 
     def help_clicked(self):
         self.help_w.show()
 
     def about_clicked(self):
         self.about_w.show()
+
+
+    def case1_selected(self):
+        testlabel.
 
 
 class HelpWindow(QWidget):

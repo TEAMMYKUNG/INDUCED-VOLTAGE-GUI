@@ -407,19 +407,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <spacer name="horizontalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </item>
        <item>
@@ -440,7 +427,7 @@
          <item>
           <widget class="QRadioButton" name="case6">
            <property name="text">
-            <string>DS-TG-1 ( 115 kV วงจรคู่ + 22kV)</string>
+            <string>DS-TG-1 ( 115 kV Double Circuit  + 22kV)</string>
            </property>
           </widget>
          </item>

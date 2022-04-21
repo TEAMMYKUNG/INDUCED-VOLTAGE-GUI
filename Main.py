@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         self.line_current_115 = 1606.539
         self.line_current_22 = 8397.8
         self.EPSILON_0 = 8.854 * pow(10, -12)
-        self.v_safe = 12000
+        self.v_safe = 30000
         # event control
         self.actionHelp.triggered.connect(self.help_clicked)
         self.actionAbout_US.triggered.connect(self.about_clicked)
@@ -99,8 +99,8 @@ class MainWindow(QMainWindow):
         obj_size = float(self.conduc_size.text())
         inter_h = float(self.inter_y.text())
         inter_x = float(self.inter_x.text())
-        range_x = float(self.max_h.text())
-        range_y = float(self.max_dis.text())
+        range_y = float(self.max_h.text())
+        range_x = float(self.max_dis.text())
         m_xp = []
         v_induce = []
 
@@ -148,7 +148,6 @@ class MainWindow(QMainWindow):
         plt.figure(figsize=(16, 9))
         heatmap = sns.heatmap(df, cmap='OrRd', cbar=False)
         heatmap.invert_yaxis()
-        heatmap.invert_xaxis()
         heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
         plt.show()
 

@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import *
-from PyQt6.QtGui import *
+from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication,QErrorMessage
+from PyQt6.QtGui import QFont
 from PyQt6 import uic
 import numpy as np
 import pandas as pd
@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
         df = pd.DataFrame.from_dict(data)
         df.set_index('distance', inplace=True)
 
-        title_h = str('Induce Voltage & Distance (High '+str(inter_h)+' m) (Mean'+str(round(np.mean(v_induce),2))+' V) (Max '+str(np.max(v_induce))+'V)')
+        title_h = str('Induce Voltage & Distance (High '+str(inter_h)+' m) (Mean'+str(round(np.mean(v_induce),2))+' V) (Max '+str(np.max(v_induce))+'V)(Interest Point '+str(self.calculate(inter_x, inter_h, obj_size))+'V)')
         df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=-15, ylim=0)
 
 

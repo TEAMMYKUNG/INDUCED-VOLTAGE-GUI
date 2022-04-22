@@ -111,10 +111,11 @@ class MainWindow(QMainWindow):
         data = {'distance': m_xp, 'Induced Voltage': v_induce}
         df = pd.DataFrame.from_dict(data)
         df.set_index('distance', inplace=True)
-
         title_h = str('Induce Voltage & Distance (High '+str(inter_h)+' m) (Mean'+str(round(np.mean(v_induce),2))+' V) (Max '+str(np.max(v_induce))+'V)(Interest Point '+str(self.calculate(inter_x, inter_h, obj_size))+'V)')
-        df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=-15, ylim=0)
-
+        df.plot(figsize=(10, 8), num="Induce Voltage Graph",ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=[-range_x, range_x], ylim=0)
+        plt.vlines(x=0, ymin=0, ymax=round(np.max(v_induce),2)+1000, colors='green', ls=':', lw=2, label='Electric Pole')
+        plt.tight_layout()
+        plt.legend()
 
         # heatmap
         x_ax = np.arange(-range_x, range_x, 0.1)
@@ -138,14 +139,13 @@ class MainWindow(QMainWindow):
 
         # Normal Heatmap
         df = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9))
+        plt.figure(figsize=(16, 9),num="Healpmap")
         heatmap = sns.heatmap(df, cbar_kws={'label': 'Induce Voltage(V)'}, cmap='Spectral')
         heatmap.invert_yaxis()
         heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Induce Voltage & Distance')
-
         # safe zone Heatmap
         df = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9))
+        plt.figure(figsize=(16, 9),num="Safe Zone Map")
         heatmap = sns.heatmap(df, cmap='OrRd', cbar=False)
         heatmap.invert_yaxis()
         heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')

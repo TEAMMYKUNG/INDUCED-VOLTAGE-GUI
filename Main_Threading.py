@@ -113,10 +113,8 @@ class MainWindow(QMainWindow):
         df.set_index('distance', inplace=True)
 
         title_h = str('Induce Voltage & Distance (High '+str(inter_h)+' m) (Mean'+str(round(np.mean(v_induce),2))+' V) (Max '+str(np.max(v_induce))+'V)(Interest Point '+str(self.calculate(inter_x, inter_h, obj_size))+'V)')
-        df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=[-range_x, range_x], ylim=0)
-        plt.vlines(x=0, ymin=0, ymax=round(np.max(v_induce),2)+1000, colors='green', ls=':', lw=2, label='Electric Post')
-        plt.tight_layout()
-        plt.legend()
+        df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=-15, ylim=0)
+
 
         # heatmap
         x_ax = np.arange(-range_x, range_x, 0.1)
@@ -137,22 +135,20 @@ class MainWindow(QMainWindow):
                     z_con[cy][cx] = 1
                 else:
                     z_con[cy][cx] = 0
+
         # Normal Heatmap
-        Heatmap_Data = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9),num="Healpmap")
-        heatmap = sns.heatmap(Heatmap_Data, cbar_kws={'label': 'Induce Voltage(V)'}, cmap='Spectral')
+        df = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
+        plt.figure(figsize=(16, 9))
+        heatmap = sns.heatmap(df, cbar_kws={'label': 'Induce Voltage(V)'}, cmap='Spectral')
         heatmap.invert_yaxis()
         heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Induce Voltage & Distance')
-        post_pose1 = len(x_ax)/2
-        post_pose2 = post_pose1 + 1
-        heatmap.vlines([post_pose1, post_pose2], *heatmap.get_xlim())
 
         # safe zone Heatmap
-        Safe_Data = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9),num="Safe Zone Map")
-        safe_zone = sns.heatmap(Safe_Data, cmap='OrRd', cbar=False)
-        safe_zone.invert_yaxis()
-        safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
+        df = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
+        plt.figure(figsize=(16, 9))
+        heatmap = sns.heatmap(df, cmap='OrRd', cbar=False)
+        heatmap.invert_yaxis()
+        heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
         plt.show()
 
     def calculate(self, xp, yp, obj_size):

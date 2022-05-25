@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication,QErrorMessage
+from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QErrorMessage
 from PyQt6.QtGui import QFont
 from PyQt6 import uic
 import numpy as np
@@ -61,15 +61,20 @@ class MainWindow(QMainWindow):
 
     def check_null_value(self):
         if not self.conduc_size.text():
-            self.error_dialog.showMessage('Please Enter Conductor Size , กรุณากรอกข้อมูล ความยาวของตัวนำที่ขนานกับตัวนำที่มีพลังงานในช่อง Conductor Size')
+            self.error_dialog.showMessage(
+                'Please Enter Conductor Size , กรุณากรอกข้อมูล ความยาวของตัวนำที่ขนานกับตัวนำที่มีพลังงานในช่อง Conductor Size')
         elif not self.inter_y.text():
-            self.error_dialog.showMessage('Please Enter Interest Y , กรุณากรอกข้อมูลจุด Y ที่สนใจคำนวณ ในช่อง Interest Y ')
+            self.error_dialog.showMessage(
+                'Please Enter Interest Y , กรุณากรอกข้อมูลจุด Y ที่สนใจคำนวณ ในช่อง Interest Y ')
         elif not self.inter_x.text():
-            self.error_dialog.showMessage('Please Enter Interest X , กรุณากรอกข้อมูลจุด X ที่สนใจคำนวณ ในช่อง Interest X ')
+            self.error_dialog.showMessage(
+                'Please Enter Interest X , กรุณากรอกข้อมูลจุด X ที่สนใจคำนวณ ในช่อง Interest X ')
         elif not self.max_h.text():
-            self.error_dialog.showMessage('Please Enter Max High , กรุณากรอกความสูงที่สูงที่สุดที่จะคำนวณ ในช่อง Max High')
+            self.error_dialog.showMessage(
+                'Please Enter Max High , กรุณากรอกความสูงที่สูงที่สุดที่จะคำนวณ ในช่อง Max High')
         elif not self.max_dis.text():
-            self.error_dialog.showMessage('Please Enter Max Distance , กรุณากรอกระยะทางที่มากที่สุดที่จะคำนวณ ในช่อง Max Distance')
+            self.error_dialog.showMessage(
+                'Please Enter Max Distance , กรุณากรอกระยะทางที่มากที่สุดที่จะคำนวณ ในช่อง Max Distance')
         else:
             self.stepcalc()
 
@@ -93,7 +98,8 @@ class MainWindow(QMainWindow):
             self.case = 6
             self.check_null_value()
         else:
-            self.error_dialog.showMessage('Please Select electric pole type \n กรุณาเลือกชนิดของเสาไฟฟ้าที่ต้องการคำนวณ')
+            self.error_dialog.showMessage(
+                'Please Select electric pole type \n กรุณาเลือกชนิดของเสาไฟฟ้าที่ต้องการคำนวณ')
 
     def stepcalc(self):
         obj_size = float(self.conduc_size.text())
@@ -112,52 +118,59 @@ class MainWindow(QMainWindow):
         df = pd.DataFrame.from_dict(data)
         df.set_index('distance', inplace=True)
 
-        title_h = str('Induce Voltage & Distance (High '+str(inter_h)+' m) (Mean'+str(round(np.mean(v_induce),2))+' V) (Max '+str(np.max(v_induce))+'V)(Interest Point '+str(self.calculate(inter_x, inter_h, obj_size))+'V)')
-        df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True, xlim=[-range_x, range_x], ylim=0)
-        plt.vlines(x=0, ymin=0, ymax=round(np.max(v_induce),2)+1000, colors='green', ls=':', lw=2, label='Electric Post')
+        title_h = str('Induce Voltage & Distance (High ' + str(inter_h) + ' m) (Mean' + str(
+            round(np.mean(v_induce), 2)) + ' V) (Max ' + str(np.max(v_induce)) + 'V)(Interest Point ' + str(
+            self.calculate(inter_x, inter_h, obj_size)) + 'V)')
+        df.plot(figsize=(10, 8), ylabel='Induce Voltage(V)', xlabel='Distance(m)', title=title_h, grid=True,
+                xlim=[-range_x, range_x], ylim=0)
+        plt.vlines(x=0, ymin=0, ymax=round(np.max(v_induce), 2) + 1000, colors='green', ls=':', lw=2,
+                   label='Electric Post')
         plt.tight_layout()
         plt.legend()
 
-        # heatmap
-        x_ax = np.arange(-range_x, range_x, 0.1)
-        y_ax = np.arange(0.1, range_y, 0.1)
-        x_ax = np.round(x_ax, 2)
-        y_ax = np.round(y_ax, 2)
-        z_ax = np.zeros(shape=(len(y_ax), len(x_ax)))
-        z_con = np.zeros(shape=(len(y_ax), len(x_ax)))
-        cx = -1
+        if self.Heatmap_Check.isChecked():
+            # heatmap
+            x_ax = np.arange(-range_x, range_x, 0.1)
+            y_ax = np.arange(0.1, range_y, 0.1)
+            x_ax = np.round(x_ax, 2)
+            y_ax = np.round(y_ax, 2)
+            z_ax = np.zeros(shape=(len(y_ax), len(x_ax)))
+            z_con = np.zeros(shape=(len(y_ax), len(x_ax)))
+            cx = -1
 
-        for x_vax in x_ax:
-            cx += 1
-            cy = -1
-            for y_vax in y_ax:
-                cy += 1
-                z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
-                if self.calculate(x_vax, y_vax, obj_size) >= self.v_safe:
-                    z_con[cy][cx] = 1
-                else:
-                    z_con[cy][cx] = 0
-        # Normal Heatmap
-        Heatmap_Data = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9),num="Healpmap")
-        heatmap = sns.heatmap(Heatmap_Data, cbar_kws={'label': 'Induce Voltage(V)'}, cmap='Spectral')
-        heatmap.invert_yaxis()
-        heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Induce Voltage & Distance')
-        post_pose1 = len(x_ax)/2
-        post_pose2 = post_pose1 + 1
-        heatmap.vlines([post_pose1, post_pose2], *heatmap.get_xlim())
+            for x_vax in x_ax:
+                cx += 1
+                cy = -1
+                for y_vax in y_ax:
+                    cy += 1
+                    z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
+                    if self.calculate(x_vax, y_vax, obj_size) >= self.v_safe:
+                        z_con[cy][cx] = 1
+                    else:
+                        z_con[cy][cx] = 0
+            # Normal Heatmap
+            Heatmap_Data = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
+            plt.figure(figsize=(16, 9), num="Healpmap")
+            heatmap = sns.heatmap(Heatmap_Data, cbar_kws={'label': 'Induce Voltage(V)'}, cmap='Spectral')
+            heatmap.invert_yaxis()
+            heatmap.set(xlabel='Distance(m)', ylabel='High(m)', title='Induce Voltage & Distance')
+            post_pose1 = len(x_ax) / 2
+            post_pose2 = post_pose1 + 1
+            heatmap.vlines([post_pose1, post_pose2], *heatmap.get_xlim())
 
-        # safe zone Heatmap
-        Safe_Data = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
-        plt.figure(figsize=(16, 9),num="Safe Zone Map")
-        safe_zone = sns.heatmap(Safe_Data, cmap='OrRd', cbar=False)
-        safe_zone.invert_yaxis()
-        safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
+            """
+            # safe zone Heatmap
+            Safe_Data = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
+            plt.figure(figsize=(16, 9), num="Safe Zone Map")
+            safe_zone = sns.heatmap(Safe_Data, cmap='OrRd', cbar=False)
+            safe_zone.invert_yaxis()
+            safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
+            """
         plt.show()
 
     def calculate(self, xp, yp, obj_size):
         with np.errstate(divide='ignore', invalid='ignore'):
-        ###########################################################################################
+            ###########################################################################################
             if self.case == 1:  # case 1 : 115Kv R3
                 (xa, ya) = (2.05, 18.8)
                 (xb, yb) = (2.05, 16.3)
@@ -172,9 +185,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -184,22 +197,24 @@ class MainWindow(QMainWindow):
                     iphase[i] = pol2cart(self.line_current_115, np.radians(vars()['theta_' + i]))
 
                 v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
-                                  [np.divide(vphase['c'], np.sqrt(3))]])
+                                      [np.divide(vphase['c'], np.sqrt(3))]])
                 Matrix = np.array(
                     [[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                    np.log(np.divide(distantp['ac'], distant['ac']))],
-                    [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
-                    np.log(np.divide(distantp['bc'], distant['bc']))],
-                    [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                    np.log(2 * np.divide(yc, self.r_115))]])
+                      np.log(np.divide(distantp['ac'], distant['ac']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(2 * np.divide(yc, self.r_115))]])
                 q_cart = (2 * np.pi * self.EPSILON_0) * np.matmul(np.linalg.inv(Matrix), v_complex)
-                vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) +
-                             (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
-                             (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc'])))), (2 * np.pi * self.EPSILON_0))
+                vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) + (
+                            q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) + (
+                                             q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array([[iphase['a']], [iphase['b']], [iphase['c']]])
                 SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
-                                       np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc']))]])
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size
@@ -221,9 +236,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -232,29 +247,31 @@ class MainWindow(QMainWindow):
                     vphase[i] = pol2cart(vars()['r_' + i], np.radians(vars()['theta_' + i]))
                     iphase[i] = pol2cart(self.line_current_115, np.radians(vars()['theta_' + i]))
 
-                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))], [np.divide(vphase['c'], np.sqrt(3))]])
+                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
+                                      [np.divide(vphase['c'], np.sqrt(3))]])
                 Matrix = np.array(
                     [[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                    np.log(np.divide(distantp['ac'], distant['ac']))],
-                    [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
-                     np.log(np.divide(distantp['bc'], distant['bc']))],
-                    [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                    np.log(2 * np.divide(yc, self.r_115))]])
+                      np.log(np.divide(distantp['ac'], distant['ac']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])), np.log(2 * np.divide(yc, self.r_115))]])
                 q_cart = (2 * np.pi * self.EPSILON_0) * np.matmul(np.linalg.inv(Matrix), v_complex)
                 vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) + (
                         q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) + (
-                        q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc'])))), (2 * np.pi * self.EPSILON_0))
+                                         q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array([[iphase['a']], [iphase['b']], [iphase['c']]])
                 SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
-                                       np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc']))]])
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size
                 vp = vpm + vpe
                 (VP, VI) = cart2pol(np.real(vp), np.imag(vp))
                 return round(VP[0][0], 2)
-        ###############################################
+            ###############################################
             if self.case == 3:  # case 3: 115kv R3 Bundle
                 (xa, ya) = (1.95, 18.8)
                 (xb, yb) = (2.15, 18.8)
@@ -274,9 +291,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -285,38 +302,57 @@ class MainWindow(QMainWindow):
                     vphase[i] = pol2cart(vars()['r_' + i], np.radians(vars()['theta_' + i]))
                     iphase[i] = pol2cart(self.line_current_115, np.radians(vars()['theta_' + i]))
 
-                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))], [np.divide(vphase['c'], np.sqrt(3))],
-                                  [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))], [np.divide(vphase['f'], np.sqrt(3))]])
-                Matrix = np.array([[np.log(2 * np.divide(ya, self.gmr_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                                np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['ad'], distant['ad'])),
-                                np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['af'], distant['af']))],
-                               [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.gmr_115)),
-                                np.log(np.divide(distantp['bc'], distant['bc'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['be'], distant['be'])), np.log(np.divide(distantp['bf'], distant['bf']))],
-                               [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                                np.log(2 * np.divide(yc, self.gmr_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['cf'], distant['cf']))],
-                               [np.log(np.divide(distantp['ad'], distant['ad'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.gmr_115)),
-                                np.log(np.divide(distantp['de'], distant['de'])), np.log(np.divide(distantp['df'], distant['df']))],
-                               [np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['be'], distant['be'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['de'], distant['de'])),
-                                np.log(2 * np.divide(ye, self.gmr_115)), np.log(np.divide(distantp['ef'], distant['ef']))],
-                               [np.log(np.divide(distantp['af'], distant['af'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['cf'], distant['cf'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.gmr_115))]])
+                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
+                                      [np.divide(vphase['c'], np.sqrt(3))],
+                                      [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))],
+                                      [np.divide(vphase['f'], np.sqrt(3))]])
+                Matrix = np.array(
+                    [[np.log(2 * np.divide(ya, self.gmr_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
+                      np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['af'], distant['af']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.gmr_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['bf'], distant['bf']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(2 * np.divide(yc, self.gmr_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['cf'], distant['cf']))],
+                     [np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.gmr_115)),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(np.divide(distantp['df'], distant['df']))],
+                     [np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(2 * np.divide(ye, self.gmr_115)), np.log(np.divide(distantp['ef'], distant['ef']))],
+                     [np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.gmr_115))]])
                 q_cart = (2 * np.pi * self.EPSILON_0) * np.matmul(np.linalg.inv(Matrix), v_complex)
                 vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) +
-                   (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
-                   (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
-                   (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
-                   (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
-                   (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf'])))), (2 * np.pi * self.EPSILON_0))
+                                 (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
+                                 (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
+                                 (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
+                                 (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
+                                 (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array(
                     [[iphase['a']], [iphase['b']], [iphase['c']], [iphase['d']], [iphase['e']], [iphase['f']]])
-                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])), np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc'])), np.log(np.divide(distantD['pd'], distant['pd'])),
-                                       np.log(np.divide(distantD['pe'], distant['pe'])), np.log(np.divide(distantD['pf'], distant['pf']))]])
+                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc'])),
+                                           np.log(np.divide(distantD['pd'], distant['pd'])),
+                                           np.log(np.divide(distantD['pe'], distant['pe'])),
+                                           np.log(np.divide(distantD['pf'], distant['pf']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size
@@ -343,9 +379,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -357,45 +393,64 @@ class MainWindow(QMainWindow):
                     if i in ('d', 'e', 'f'):
                         iphase[i] = pol2cart(self.line_current_22, np.radians(vars()['theta_' + i]))
 
-                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))], [np.divide(vphase['c'], np.sqrt(3))],
-                                  [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))], [np.divide(vphase['f'], np.sqrt(3))]])
-                Matrix = np.array([[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                                np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['ad'], distant['ad'])),
-                                np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['af'], distant['af']))],
-                               [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
-                                np.log(np.divide(distantp['bc'], distant['bc'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['be'], distant['be'])), np.log(np.divide(distantp['bf'], distant['bf']))],
-                               [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                                np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['cf'], distant['cf']))],
-                               [np.log(np.divide(distantp['ad'], distant['ad'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_22)),
-                                np.log(np.divide(distantp['de'], distant['de'])), np.log(np.divide(distantp['df'], distant['df']))],
-                               [np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['be'], distant['be'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['de'], distant['de'])),
-                                np.log(2 * np.divide(ye, self.r_22)), np.log(np.divide(distantp['ef'], distant['ef']))],
-                               [np.log(np.divide(distantp['af'], distant['af'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['cf'], distant['cf'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_22))]])
+                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
+                                      [np.divide(vphase['c'], np.sqrt(3))],
+                                      [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))],
+                                      [np.divide(vphase['f'], np.sqrt(3))]])
+                Matrix = np.array(
+                    [[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
+                      np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['af'], distant['af']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['bf'], distant['bf']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['cf'], distant['cf']))],
+                     [np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_22)),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(np.divide(distantp['df'], distant['df']))],
+                     [np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(2 * np.divide(ye, self.r_22)), np.log(np.divide(distantp['ef'], distant['ef']))],
+                     [np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_22))]])
                 q_cart = 2 * np.pi * self.EPSILON_0 * np.matmul(np.linalg.inv(Matrix), v_complex)
                 vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) + (
-                    q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) + (
-                    q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) + (
-                    q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) + (
-                    q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) + (
-                    q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf'])))), (2 * np.pi * self.EPSILON_0))
+                        q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) + (
+                                         q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) + (
+                                         q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) + (
+                                         q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) + (
+                                         q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array(
                     [[iphase['a']], [iphase['b']], [iphase['c']], [iphase['d']], [iphase['e']], [iphase['f']]])
-                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])), np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc'])), np.log(np.divide(distantD['pd'], distant['pd'])),
-                                       np.log(np.divide(distantD['pe'], distant['pe'])), np.log(np.divide(distantD['pf'], distant['pf']))]])
+                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc'])),
+                                           np.log(np.divide(distantD['pd'], distant['pd'])),
+                                           np.log(np.divide(distantD['pe'], distant['pe'])),
+                                           np.log(np.divide(distantD['pf'], distant['pf']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size
                 vp = vpm + vpe
                 (VP, VI) = cart2pol(np.real(vp), np.imag(vp))
                 return round(VP[0][0], 2)
-        ############################################################################################
+            ############################################################################################
             if self.case == 5:  # case 5: 115kv Double Circuit R1+L2  + 22kv
                 (xa, ya) = (-2.1, 18.8)
                 (xb, yb) = (-1.9, 18.8)
@@ -421,9 +476,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -435,73 +490,110 @@ class MainWindow(QMainWindow):
                     if i in ('g', 'h', 'i'):
                         iphase[i] = pol2cart(self.line_current_22, np.radians(vars()['theta_' + i]))
 
-                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))], [np.divide(vphase['c'], np.sqrt(3))],
-                                  [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))], [np.divide(vphase['f'], np.sqrt(3))],
-                                  [np.divide(vphase['g'], np.sqrt(3))], [np.divide(vphase['h'], np.sqrt(3))], [np.divide(vphase['i'], np.sqrt(3))]])
-                Matrix = np.array([[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                                np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['ad'], distant['ad'])),
-                                np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['af'], distant['af'])),
-                                np.log(np.divide(distantp['ag'], distant['ag'])), np.log(np.divide(distantp['ah'], distant['ah'])),
-                                np.log(np.divide(distantp['ai'], distant['ai']))],
-                               [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
-                                np.log(np.divide(distantp['bc'], distant['bc'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['be'], distant['be'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['bg'], distant['bg'])), np.log(np.divide(distantp['bh'], distant['bh'])),
-                                np.log(np.divide(distantp['bi'], distant['bi']))],
-                               [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                                np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['cf'], distant['cf'])),
-                                np.log(np.divide(distantp['cg'], distant['cg'])), np.log(np.divide(distantp['ch'], distant['ch'])),
-                                np.log(np.divide(distantp['ci'], distant['ci']))],
-                               [np.log(np.divide(distantp['ad'], distant['ad'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_115)),
-                                np.log(np.divide(distantp['de'], distant['de'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['dg'], distant['dg'])), np.log(np.divide(distantp['dh'], distant['dh'])),
-                                np.log(np.divide(distantp['di'], distant['di']))],
-                               [np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['be'], distant['be'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['de'], distant['de'])),
-                                np.log(2 * np.divide(ye, self.r_115)), np.log(np.divide(distantp['ef'], distant['ef'])),
-                                np.log(np.divide(distantp['eg'], distant['eg'])), np.log(np.divide(distantp['eh'], distant['eh'])),
-                                np.log(np.divide(distantp['ei'], distant['ei']))],
-                               [np.log(np.divide(distantp['af'], distant['af'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['cf'], distant['cf'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_115)),
-                                np.log(np.divide(distantp['fg'], distant['fg'])), np.log(np.divide(distantp['fh'], distant['fh'])),
-                                np.log(np.divide(distantp['fi'], distant['fi']))],
-                               [np.log(np.divide(distantp['ag'], distant['ag'])), np.log(np.divide(distantp['bg'], distant['bg'])),
-                                np.log(np.divide(distantp['cg'], distant['cg'])), np.log(np.divide(distantp['dg'], distant['dg'])),
-                                np.log(np.divide(distantp['eg'], distant['eg'])), np.log(np.divide(distantp['fg'], distant['fg'])),
-                                np.log(2 * np.divide(yg, self.r_22)), np.log(np.divide(distantp['gh'], distant['gh'])),
-                                np.log(np.divide(distantp['gi'], distant['gi']))],
-                               [np.log(np.divide(distantp['ah'], distant['ah'])), np.log(np.divide(distantp['bh'], distant['bh'])),
-                                np.log(np.divide(distantp['ch'], distant['ch'])), np.log(np.divide(distantp['dh'], distant['dh'])),
-                                np.log(np.divide(distantp['eh'], distant['eh'])), np.log(np.divide(distantp['fh'], distant['fh'])),
-                                np.log(np.divide(distantp['gh'], distant['gh'])), np.log(2 * np.divide(yh, self.r_22)),
-                                np.log(np.divide(distantp['hi'], distant['hi']))],
-                               [np.log(np.divide(distantp['ai'], distant['ai'])), np.log(np.divide(distantp['bi'], distant['bi'])),
-                                np.log(np.divide(distantp['ci'], distant['ci'])), np.log(np.divide(distantp['di'], distant['di'])),
-                                np.log(np.divide(distantp['ei'], distant['ei'])), np.log(np.divide(distantp['fi'], distant['fi'])),
-                                np.log(np.divide(distantp['gi'], distant['gi'])), np.log(np.divide(distantp['hi'], distant['hi'])),
-                                np.log(2 * np.divide(yi, self.r_22))]])
+                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
+                                      [np.divide(vphase['c'], np.sqrt(3))],
+                                      [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))],
+                                      [np.divide(vphase['f'], np.sqrt(3))],
+                                      [np.divide(vphase['g'], np.sqrt(3))], [np.divide(vphase['h'], np.sqrt(3))],
+                                      [np.divide(vphase['i'], np.sqrt(3))]])
+                Matrix = np.array(
+                    [[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
+                      np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['ag'], distant['ag'])),
+                      np.log(np.divide(distantp['ah'], distant['ah'])),
+                      np.log(np.divide(distantp['ai'], distant['ai']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['bg'], distant['bg'])),
+                      np.log(np.divide(distantp['bh'], distant['bh'])),
+                      np.log(np.divide(distantp['bi'], distant['bi']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['cg'], distant['cg'])),
+                      np.log(np.divide(distantp['ch'], distant['ch'])),
+                      np.log(np.divide(distantp['ci'], distant['ci']))],
+                     [np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_115)),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['dg'], distant['dg'])),
+                      np.log(np.divide(distantp['dh'], distant['dh'])),
+                      np.log(np.divide(distantp['di'], distant['di']))],
+                     [np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(2 * np.divide(ye, self.r_115)), np.log(np.divide(distantp['ef'], distant['ef'])),
+                      np.log(np.divide(distantp['eg'], distant['eg'])),
+                      np.log(np.divide(distantp['eh'], distant['eh'])),
+                      np.log(np.divide(distantp['ei'], distant['ei']))],
+                     [np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_115)),
+                      np.log(np.divide(distantp['fg'], distant['fg'])),
+                      np.log(np.divide(distantp['fh'], distant['fh'])),
+                      np.log(np.divide(distantp['fi'], distant['fi']))],
+                     [np.log(np.divide(distantp['ag'], distant['ag'])),
+                      np.log(np.divide(distantp['bg'], distant['bg'])),
+                      np.log(np.divide(distantp['cg'], distant['cg'])),
+                      np.log(np.divide(distantp['dg'], distant['dg'])),
+                      np.log(np.divide(distantp['eg'], distant['eg'])),
+                      np.log(np.divide(distantp['fg'], distant['fg'])),
+                      np.log(2 * np.divide(yg, self.r_22)), np.log(np.divide(distantp['gh'], distant['gh'])),
+                      np.log(np.divide(distantp['gi'], distant['gi']))],
+                     [np.log(np.divide(distantp['ah'], distant['ah'])),
+                      np.log(np.divide(distantp['bh'], distant['bh'])),
+                      np.log(np.divide(distantp['ch'], distant['ch'])),
+                      np.log(np.divide(distantp['dh'], distant['dh'])),
+                      np.log(np.divide(distantp['eh'], distant['eh'])),
+                      np.log(np.divide(distantp['fh'], distant['fh'])),
+                      np.log(np.divide(distantp['gh'], distant['gh'])), np.log(2 * np.divide(yh, self.r_22)),
+                      np.log(np.divide(distantp['hi'], distant['hi']))],
+                     [np.log(np.divide(distantp['ai'], distant['ai'])),
+                      np.log(np.divide(distantp['bi'], distant['bi'])),
+                      np.log(np.divide(distantp['ci'], distant['ci'])),
+                      np.log(np.divide(distantp['di'], distant['di'])),
+                      np.log(np.divide(distantp['ei'], distant['ei'])),
+                      np.log(np.divide(distantp['fi'], distant['fi'])),
+                      np.log(np.divide(distantp['gi'], distant['gi'])),
+                      np.log(np.divide(distantp['hi'], distant['hi'])),
+                      np.log(2 * np.divide(yi, self.r_22))]])
 
                 q_cart = 2 * np.pi * self.EPSILON_0 * np.matmul(np.linalg.inv(Matrix), v_complex)
                 vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) +
-                   (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
-                   (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
-                   (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
-                   (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
-                   (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf']))) +
-                   (q_cart[6] * np.log(np.divide(distantp['pg'], distant['pg']))) +
-                   (q_cart[7] * np.log(np.divide(distantp['ph'], distant['ph']))) +
-                   (q_cart[8] * np.log(np.divide(distantp['pi'], distant['pi'])))), (2 * np.pi * self.EPSILON_0))
+                                 (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
+                                 (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
+                                 (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
+                                 (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
+                                 (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf']))) +
+                                 (q_cart[6] * np.log(np.divide(distantp['pg'], distant['pg']))) +
+                                 (q_cart[7] * np.log(np.divide(distantp['ph'], distant['ph']))) +
+                                 (q_cart[8] * np.log(np.divide(distantp['pi'], distant['pi'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array(
                     [[iphase['a']], [iphase['b']], [iphase['c']], [iphase['d']], [iphase['e']], [iphase['f']],
-                    [iphase['g']], [iphase['h']], [iphase['i']]])
-                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])), np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc'])), np.log(np.divide(distantD['pd'], distant['pd'])),
-                                       np.log(np.divide(distantD['pe'], distant['pe'])), np.log(np.divide(distantD['pf'], distant['pf'])),
-                                       np.log(np.divide(distantD['pg'], distant['pg'])), np.log(np.divide(distantD['ph'], distant['ph'])),
-                                       np.log(np.divide(distantD['pi'], distant['pi']))]])
+                     [iphase['g']], [iphase['h']], [iphase['i']]])
+                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc'])),
+                                           np.log(np.divide(distantD['pd'], distant['pd'])),
+                                           np.log(np.divide(distantD['pe'], distant['pe'])),
+                                           np.log(np.divide(distantD['pf'], distant['pf'])),
+                                           np.log(np.divide(distantD['pg'], distant['pg'])),
+                                           np.log(np.divide(distantD['ph'], distant['ph'])),
+                                           np.log(np.divide(distantD['pi'], distant['pi']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size
@@ -534,9 +626,9 @@ class MainWindow(QMainWindow):
                 for i in list(comb):
                     key = str(str(i[0]) + str(i[1]))
                     distant[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                            vars()['y' + i[1]])
+                                                vars()['y' + i[1]])
                     distantp[key] = cal_distance(vars()['x' + i[0]], vars()['x' + i[1]], vars()['y' + i[0]],
-                                             - vars()['y' + i[1]])
+                                                 - vars()['y' + i[1]])
                 for i in conductor:
                     key = str('p' + i)
                     distant[key] = cal_distance(xp, vars()['x' + i], yp, vars()['y' + i])
@@ -548,73 +640,110 @@ class MainWindow(QMainWindow):
                     if i in ('g', 'h', 'i'):
                         iphase[i] = pol2cart(self.line_current_22, np.radians(vars()['theta_' + i]))
 
-                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))], [np.divide(vphase['c'], np.sqrt(3))],
-                                  [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))], [np.divide(vphase['f'], np.sqrt(3))],
-                                  [np.divide(vphase['g'], np.sqrt(3))], [np.divide(vphase['h'], np.sqrt(3))], [np.divide(vphase['i'], np.sqrt(3))]])
-                Matrix = np.array([[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
-                                np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['ad'], distant['ad'])),
-                                np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['af'], distant['af'])),
-                                np.log(np.divide(distantp['ag'], distant['ag'])), np.log(np.divide(distantp['ah'], distant['ah'])),
-                                np.log(np.divide(distantp['ai'], distant['ai']))],
-                               [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
-                                np.log(np.divide(distantp['bc'], distant['bc'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['be'], distant['be'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['bg'], distant['bg'])), np.log(np.divide(distantp['bh'], distant['bh'])),
-                                np.log(np.divide(distantp['bi'], distant['bi']))],
-                               [np.log(np.divide(distantp['ac'], distant['ac'])), np.log(np.divide(distantp['bc'], distant['bc'])),
-                                np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['cf'], distant['cf'])),
-                                np.log(np.divide(distantp['cg'], distant['cg'])), np.log(np.divide(distantp['ch'], distant['ch'])),
-                                np.log(np.divide(distantp['ci'], distant['ci']))],
-                               [np.log(np.divide(distantp['ad'], distant['ad'])), np.log(np.divide(distantp['bd'], distant['bd'])),
-                                np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_115)),
-                                np.log(np.divide(distantp['de'], distant['de'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['dg'], distant['dg'])), np.log(np.divide(distantp['dh'], distant['dh'])),
-                                np.log(np.divide(distantp['di'], distant['di']))],
-                               [np.log(np.divide(distantp['ae'], distant['ae'])), np.log(np.divide(distantp['be'], distant['be'])),
-                                np.log(np.divide(distantp['ce'], distant['ce'])), np.log(np.divide(distantp['de'], distant['de'])),
-                                np.log(2 * np.divide(ye, self.r_115)), np.log(np.divide(distantp['ef'], distant['ef'])),
-                                np.log(np.divide(distantp['eg'], distant['eg'])), np.log(np.divide(distantp['eh'], distant['eh'])),
-                                np.log(np.divide(distantp['ei'], distant['ei']))],
-                               [np.log(np.divide(distantp['af'], distant['af'])), np.log(np.divide(distantp['bf'], distant['bf'])),
-                                np.log(np.divide(distantp['cf'], distant['cf'])), np.log(np.divide(distantp['df'], distant['df'])),
-                                np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_115)),
-                                np.log(np.divide(distantp['fg'], distant['fg'])), np.log(np.divide(distantp['fh'], distant['fh'])),
-                                np.log(np.divide(distantp['fi'], distant['fi']))],
-                               [np.log(np.divide(distantp['ag'], distant['ag'])), np.log(np.divide(distantp['bg'], distant['bg'])),
-                                np.log(np.divide(distantp['cg'], distant['cg'])), np.log(np.divide(distantp['dg'], distant['dg'])),
-                                np.log(np.divide(distantp['eg'], distant['eg'])), np.log(np.divide(distantp['fg'], distant['fg'])),
-                                np.log(2 * np.divide(yg, self.r_22)), np.log(np.divide(distantp['gh'], distant['gh'])),
-                                np.log(np.divide(distantp['gi'], distant['gi']))],
-                               [np.log(np.divide(distantp['ah'], distant['ah'])), np.log(np.divide(distantp['bh'], distant['bh'])),
-                                np.log(np.divide(distantp['ch'], distant['ch'])), np.log(np.divide(distantp['dh'], distant['dh'])),
-                                np.log(np.divide(distantp['eh'], distant['eh'])), np.log(np.divide(distantp['fh'], distant['fh'])),
-                                np.log(np.divide(distantp['gh'], distant['gh'])), np.log(2 * np.divide(yh, self.r_22)),
-                                np.log(np.divide(distantp['hi'], distant['hi']))],
-                               [np.log(np.divide(distantp['ai'], distant['ai'])), np.log(np.divide(distantp['bi'], distant['bi'])),
-                                np.log(np.divide(distantp['ci'], distant['ci'])), np.log(np.divide(distantp['di'], distant['di'])),
-                                np.log(np.divide(distantp['ei'], distant['ei'])), np.log(np.divide(distantp['fi'], distant['fi'])),
-                                np.log(np.divide(distantp['gi'], distant['gi'])), np.log(np.divide(distantp['hi'], distant['hi'])),
-                                np.log(2 * np.divide(yi, self.r_22))]])
+                v_complex = np.array([[np.divide(vphase['a'], np.sqrt(3))], [np.divide(vphase['b'], np.sqrt(3))],
+                                      [np.divide(vphase['c'], np.sqrt(3))],
+                                      [np.divide(vphase['d'], np.sqrt(3))], [np.divide(vphase['e'], np.sqrt(3))],
+                                      [np.divide(vphase['f'], np.sqrt(3))],
+                                      [np.divide(vphase['g'], np.sqrt(3))], [np.divide(vphase['h'], np.sqrt(3))],
+                                      [np.divide(vphase['i'], np.sqrt(3))]])
+                Matrix = np.array(
+                    [[np.log(2 * np.divide(ya, self.r_115)), np.log(np.divide(distantp['ab'], distant['ab'])),
+                      np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['ag'], distant['ag'])),
+                      np.log(np.divide(distantp['ah'], distant['ah'])),
+                      np.log(np.divide(distantp['ai'], distant['ai']))],
+                     [np.log(np.divide(distantp['ab'], distant['ab'])), np.log(2 * np.divide(yb, self.r_115)),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['bg'], distant['bg'])),
+                      np.log(np.divide(distantp['bh'], distant['bh'])),
+                      np.log(np.divide(distantp['bi'], distant['bi']))],
+                     [np.log(np.divide(distantp['ac'], distant['ac'])),
+                      np.log(np.divide(distantp['bc'], distant['bc'])),
+                      np.log(2 * np.divide(yc, self.r_115)), np.log(np.divide(distantp['cd'], distant['cd'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['cg'], distant['cg'])),
+                      np.log(np.divide(distantp['ch'], distant['ch'])),
+                      np.log(np.divide(distantp['ci'], distant['ci']))],
+                     [np.log(np.divide(distantp['ad'], distant['ad'])),
+                      np.log(np.divide(distantp['bd'], distant['bd'])),
+                      np.log(np.divide(distantp['cd'], distant['cd'])), np.log(2 * np.divide(yd, self.r_115)),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['dg'], distant['dg'])),
+                      np.log(np.divide(distantp['dh'], distant['dh'])),
+                      np.log(np.divide(distantp['di'], distant['di']))],
+                     [np.log(np.divide(distantp['ae'], distant['ae'])),
+                      np.log(np.divide(distantp['be'], distant['be'])),
+                      np.log(np.divide(distantp['ce'], distant['ce'])),
+                      np.log(np.divide(distantp['de'], distant['de'])),
+                      np.log(2 * np.divide(ye, self.r_115)), np.log(np.divide(distantp['ef'], distant['ef'])),
+                      np.log(np.divide(distantp['eg'], distant['eg'])),
+                      np.log(np.divide(distantp['eh'], distant['eh'])),
+                      np.log(np.divide(distantp['ei'], distant['ei']))],
+                     [np.log(np.divide(distantp['af'], distant['af'])),
+                      np.log(np.divide(distantp['bf'], distant['bf'])),
+                      np.log(np.divide(distantp['cf'], distant['cf'])),
+                      np.log(np.divide(distantp['df'], distant['df'])),
+                      np.log(np.divide(distantp['ef'], distant['ef'])), np.log(2 * np.divide(yf, self.r_115)),
+                      np.log(np.divide(distantp['fg'], distant['fg'])),
+                      np.log(np.divide(distantp['fh'], distant['fh'])),
+                      np.log(np.divide(distantp['fi'], distant['fi']))],
+                     [np.log(np.divide(distantp['ag'], distant['ag'])),
+                      np.log(np.divide(distantp['bg'], distant['bg'])),
+                      np.log(np.divide(distantp['cg'], distant['cg'])),
+                      np.log(np.divide(distantp['dg'], distant['dg'])),
+                      np.log(np.divide(distantp['eg'], distant['eg'])),
+                      np.log(np.divide(distantp['fg'], distant['fg'])),
+                      np.log(2 * np.divide(yg, self.r_22)), np.log(np.divide(distantp['gh'], distant['gh'])),
+                      np.log(np.divide(distantp['gi'], distant['gi']))],
+                     [np.log(np.divide(distantp['ah'], distant['ah'])),
+                      np.log(np.divide(distantp['bh'], distant['bh'])),
+                      np.log(np.divide(distantp['ch'], distant['ch'])),
+                      np.log(np.divide(distantp['dh'], distant['dh'])),
+                      np.log(np.divide(distantp['eh'], distant['eh'])),
+                      np.log(np.divide(distantp['fh'], distant['fh'])),
+                      np.log(np.divide(distantp['gh'], distant['gh'])), np.log(2 * np.divide(yh, self.r_22)),
+                      np.log(np.divide(distantp['hi'], distant['hi']))],
+                     [np.log(np.divide(distantp['ai'], distant['ai'])),
+                      np.log(np.divide(distantp['bi'], distant['bi'])),
+                      np.log(np.divide(distantp['ci'], distant['ci'])),
+                      np.log(np.divide(distantp['di'], distant['di'])),
+                      np.log(np.divide(distantp['ei'], distant['ei'])),
+                      np.log(np.divide(distantp['fi'], distant['fi'])),
+                      np.log(np.divide(distantp['gi'], distant['gi'])),
+                      np.log(np.divide(distantp['hi'], distant['hi'])),
+                      np.log(2 * np.divide(yi, self.r_22))]])
 
                 q_cart = 2 * np.pi * self.EPSILON_0 * np.matmul(np.linalg.inv(Matrix), v_complex)
                 vpe = np.divide(((q_cart[0] * np.log(np.divide(distantp['pa'], distant['pa']))) +
-                   (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
-                   (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
-                   (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
-                   (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
-                   (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf']))) +
-                   (q_cart[6] * np.log(np.divide(distantp['pg'], distant['pg']))) +
-                   (q_cart[7] * np.log(np.divide(distantp['ph'], distant['ph']))) +
-                   (q_cart[8] * np.log(np.divide(distantp['pi'], distant['pi'])))), (2 * np.pi * self.EPSILON_0))
+                                 (q_cart[1] * np.log(np.divide(distantp['pb'], distant['pb']))) +
+                                 (q_cart[2] * np.log(np.divide(distantp['pc'], distant['pc']))) +
+                                 (q_cart[3] * np.log(np.divide(distantp['pd'], distant['pd']))) +
+                                 (q_cart[4] * np.log(np.divide(distantp['pe'], distant['pe']))) +
+                                 (q_cart[5] * np.log(np.divide(distantp['pf'], distant['pf']))) +
+                                 (q_cart[6] * np.log(np.divide(distantp['pg'], distant['pg']))) +
+                                 (q_cart[7] * np.log(np.divide(distantp['ph'], distant['ph']))) +
+                                 (q_cart[8] * np.log(np.divide(distantp['pi'], distant['pi'])))),
+                                (2 * np.pi * self.EPSILON_0))
                 i_complex = np.array(
                     [[iphase['a']], [iphase['b']], [iphase['c']], [iphase['d']], [iphase['e']], [iphase['f']],
-                    [iphase['g']], [iphase['h']], [iphase['i']]])
-                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])), np.log(np.divide(distantD['pb'], distant['pb'])),
-                                       np.log(np.divide(distantD['pc'], distant['pc'])), np.log(np.divide(distantD['pd'], distant['pd'])),
-                                       np.log(np.divide(distantD['pe'], distant['pe'])), np.log(np.divide(distantD['pf'], distant['pf'])),
-                                       np.log(np.divide(distantD['pg'], distant['pg'])), np.log(np.divide(distantD['ph'], distant['ph'])),
-                                       np.log(np.divide(distantD['pi'], distant['pi']))]])
+                     [iphase['g']], [iphase['h']], [iphase['i']]])
+                SuperPosition = np.array([[np.log(np.divide(distantD['pa'], distant['pa'])),
+                                           np.log(np.divide(distantD['pb'], distant['pb'])),
+                                           np.log(np.divide(distantD['pc'], distant['pc'])),
+                                           np.log(np.divide(distantD['pd'], distant['pd'])),
+                                           np.log(np.divide(distantD['pe'], distant['pe'])),
+                                           np.log(np.divide(distantD['pf'], distant['pf'])),
+                                           np.log(np.divide(distantD['pg'], distant['pg'])),
+                                           np.log(np.divide(distantD['ph'], distant['ph'])),
+                                           np.log(np.divide(distantD['pi'], distant['pi']))]])
                 matrix2 = np.matmul(SuperPosition, i_complex)
                 ep = 2 * (10 ** -7) * 100 * np.pi * matrix2
                 vpm = ep * obj_size

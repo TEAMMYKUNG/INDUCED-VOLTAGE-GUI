@@ -137,17 +137,17 @@ class MainWindow(QMainWindow):
             z_ax = np.zeros(shape=(len(y_ax), len(x_ax)))
             z_con = np.zeros(shape=(len(y_ax), len(x_ax)))
             cx = -1
-
             for x_vax in x_ax:
                 cx += 1
                 cy = -1
                 for y_vax in y_ax:
                     cy += 1
                     z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
-                    if self.calculate(x_vax, y_vax, obj_size) >= self.v_safe:
+                    if (self.calculate(x_vax, y_vax, obj_size)/600000) >= 0.0105:
                         z_con[cy][cx] = 1
                     else:
                         z_con[cy][cx] = 0
+            z_con[0][0] = 0
             # Normal Heatmap
             Heatmap_Data = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
             plt.figure(figsize=(16, 9), num="Healpmap")
@@ -158,14 +158,14 @@ class MainWindow(QMainWindow):
             post_pose2 = post_pose1 + 1
             heatmap.vlines([post_pose1, post_pose2], *heatmap.get_xlim())
 
-            """
             # safe zone Heatmap
             Safe_Data = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
-            plt.figure(figsize=(16, 9), num="Safe Zone Map")
+            plt.figure(figsize=(16, 9), num="Danger Zone")
             safe_zone = sns.heatmap(Safe_Data, cmap='OrRd', cbar=False)
             safe_zone.invert_yaxis()
             safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
-            """
+            safe_zone.vlines([post_pose1, post_pose2], *safe_zone.get_xlim())
+
         plt.show()
 
     def calculate(self, xp, yp, obj_size):

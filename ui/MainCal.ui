@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>882</width>
-    <height>720</height>
+    <height>774</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>882</width>
-    <height>720</height>
+    <height>774</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>882</width>
-    <height>720</height>
+    <height>774</height>
    </size>
   </property>
   <property name="font">
@@ -54,13 +54,13 @@
    <property name="minimumSize">
     <size>
      <width>882</width>
-     <height>720</height>
+     <height>740</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>882</width>
-     <height>720</height>
+     <height>740</height>
     </size>
    </property>
    <widget class="QWidget" name="layoutWidget">
@@ -454,7 +454,7 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>570</y>
+      <y>580</y>
       <width>681</width>
       <height>92</height>
      </rect>
@@ -686,7 +686,6 @@ QPushButton:pressed {
         <widget class="QCheckBox" name="Heatmap_Check">
          <property name="font">
           <font>
-           <family>Leelawadee UI</family>
            <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
@@ -702,6 +701,41 @@ QPushButton:pressed {
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>690</y>
+      <width>441</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>441</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Leelawadee UI</family>
+      <pointsize>12</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: red;</string>
+    </property>
+    <property name="text">
+     <string>!! Center of electric pole X = 0 , Ground Y = 0</string>
+    </property>
    </widget>
   </widget>
   <widget class="QToolBar" name="toolBar">

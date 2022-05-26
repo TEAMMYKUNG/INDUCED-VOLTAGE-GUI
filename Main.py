@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
                 for y_vax in y_ax:
                     cy += 1
                     z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
-                    if (self.calculate(x_vax, y_vax, obj_size)/600000) >= 0.0105:
+                    if (self.calculate(x_vax, y_vax, obj_size)/601500) >= 0.0105:
                         z_con[cy][cx] = 1
                     else:
                         z_con[cy][cx] = 0

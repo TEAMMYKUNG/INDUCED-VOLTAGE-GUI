@@ -126,9 +126,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-300</y>
+          <y>0</y>
           <width>761</width>
-          <height>818</height>
+          <height>2518</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -137,13 +137,13 @@
            <property name="minimumSize">
             <size>
              <width>743</width>
-             <height>800</height>
+             <height>2500</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>743</width>
-             <height>800</height>
+             <height>2500</height>
             </size>
            </property>
            <property name="frameShape">
@@ -177,7 +177,7 @@
               <x>80</x>
               <y>410</y>
               <width>721</width>
-              <height>311</height>
+              <height>431</height>
              </rect>
             </property>
             <property name="font">
@@ -199,7 +199,7 @@
                     ( จำเป็นต้องกรอกข้อมูลในทุกช่องให้ครบถ้วนจึงสามารถคำนวณได้ )
 หมายเลข 8 – Menu Bar ซึ่งประกอบด้วย  Help เป็นหน้าต่างบอกวิธีการใช้งาน 
                    และ About Us เป็นหน้าต่างที่บอกข้อมูลของโปรแกรมและผู้พัฒนาโปรแกรม
-</string>
+ หมายเลข 9- Check Box เพื่อเลือกในการคำนวณ Heatmap</string>
             </property>
            </widget>
            <widget class="QLabel" name="label_3">
@@ -213,11 +213,189 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>18</pointsize>
+              <pointsize>20</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
              <string>หน้าต่างโปรแกรมหลัก</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_4">
+            <property name="geometry">
+             <rect>
+              <x>280</x>
+              <y>860</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>หน้าต่างกราฟแรงดันเหนี่ยวนำ</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_5">
+            <property name="geometry">
+             <rect>
+              <x>90</x>
+              <y>900</y>
+              <width>581</width>
+              <height>331</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>images/2565-05-26 22_05_23-Figure 1.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>1240</y>
+              <width>631</width>
+              <height>111</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>18</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>   เป็นหน้าต่างที่แสดงความสัมพันธ์ระหว่างแรงดันเหนี่ยวนำกับระยะห่างจากเสาไฟฟ้า
+ในระดับความสูงที่สนใจ โดยบนหัวของกราฟจะแสดงค่า Mean , Max 
+และค่าแรงดันเหนี่ยวนำบนจุดที่สนใจ</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_7">
+            <property name="geometry">
+             <rect>
+              <x>90</x>
+              <y>1780</y>
+              <width>631</width>
+              <height>111</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>18</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>     เป็นหน้าต่างที่แสดงการเปรียบเทียบกันของค่าแรงดันเหนี่ยวนำบริเวณรอบๆ 
+ เพื่อดูแนวโน้มของค่าแรงดันเหนี่ยวนำ</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_8">
+            <property name="geometry">
+             <rect>
+              <x>290</x>
+              <y>1400</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>หน้าต่าง Heatmap</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_9">
+            <property name="geometry">
+             <rect>
+              <x>100</x>
+              <y>1440</y>
+              <width>581</width>
+              <height>331</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>images/1_1.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_10">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>1960</y>
+              <width>581</width>
+              <height>331</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>images/2565-05-26 22_37_08-Danger Zone.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_11">
+            <property name="geometry">
+             <rect>
+              <x>70</x>
+              <y>2310</y>
+              <width>651</width>
+              <height>141</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>18</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>     เป็นหน้าต่างที่บอกจุดที่อันตรายไม่ควรเข้าใกล้หรือสัมผัสตัวนำที่ไม่ได้ต่อสายดินในบริเวณนั้น 
+ โดยจุดที่อันครายจะเป็นสีเเดง และ จุดปลอดภัยจะเป็นสีขาว ( ในโปรแกรมนี้ใช้การคำนวณ
+กระแสที่ไหลผ่านร่างกายมนุษย์ผิวแห้งความต้านทาน 600k โอห์ม ใช้ Let-Go Current 
+ตามมาตราฐาน IEEE ในเป็นเกณฑ์)</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_12">
+            <property name="geometry">
+             <rect>
+              <x>300</x>
+              <y>1920</y>
+              <width>241</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>หน้าต่าง Danger Zone</string>
             </property>
            </widget>
           </widget>

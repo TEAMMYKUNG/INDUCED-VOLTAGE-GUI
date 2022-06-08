@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 import seaborn as sns
 import sys
-
+from tqdm import tqdm
 
 def pol2cart(r, theta):  # define function polar form <--> cartesian
     z = r * np.exp(1j * (theta * np.pi / 180))
@@ -136,18 +136,36 @@ class MainWindow(QMainWindow):
             y_ax = np.round(y_ax, 2)
             z_ax = np.zeros(shape=(len(y_ax), len(x_ax)))
             z_con = np.zeros(shape=(len(y_ax), len(x_ax)))
+            z_induce = np.zeros(shape=(len(y_ax), len(x_ax)))
             cx = -1
-            for x_vax in x_ax:
-                cx += 1
-                cy = -1
-                for y_vax in y_ax:
-                    cy += 1
-                    z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
-                    if (self.calculate(x_vax, y_vax, obj_size)/601500) >= 0.0105:
-                        z_con[cy][cx] = 1
-                    else:
-                        z_con[cy][cx] = 0
+            current_count = 0
+            induce_count = 0
+            totalpoint = len(x_ax) * len(y_ax)
+            with tqdm(total=totalpoint) as pbar:
+                for x_vax in x_ax:
+                    cx += 1
+                    cy = -1
+                    for y_vax in y_ax:
+                        cy += 1
+                        z_ax[cy][cx] = self.calculate(x_vax, y_vax, obj_size)
+                        if (self.calculate(x_vax, y_vax, obj_size)/601500) >= 0.0105:
+                            z_con[cy][cx] = 1
+                            current_count += 1
+                        else:
+                            z_con[cy][cx] = 0
+
+                        if self.calculate(x_vax, y_vax, obj_size) >= 30000:
+                            z_induce[cy][cx] = 1
+                            induce_count += 1
+                        else:
+                            z_induce[cy][cx] = 0
+                        pbar.update(1)
             z_con[0][0] = 0
+            z_induce[0][0] = 0
+            percen_current = (current_count/totalpoint)*100
+            percen_induce = (induce_count/totalpoint)*100
+            title_current = "Danger Zone " + str(round(percen_current, 2)) +" %"
+            title_induce = "Danger Zone " + str(round(percen_induce, 2)) +" %"
             # Normal Heatmap
             Heatmap_Data = pd.DataFrame(data=z_ax, columns=x_ax, index=y_ax)
             plt.figure(figsize=(16, 9), num="Healpmap")
@@ -160,11 +178,18 @@ class MainWindow(QMainWindow):
 
             # safe zone Heatmap
             Safe_Data = pd.DataFrame(data=z_con, columns=x_ax, index=y_ax)
-            plt.figure(figsize=(16, 9), num="Danger Zone")
+            plt.figure(figsize=(16, 9), num="Danger Zone ( Use Current to define zones )")
             safe_zone = sns.heatmap(Safe_Data, cmap='OrRd', cbar=False)
             safe_zone.invert_yaxis()
-            safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title='Danger Zone')
+            safe_zone.set(xlabel='Distance(m)', ylabel='High(m)', title=title_current)
             safe_zone.vlines([post_pose1, post_pose2], *safe_zone.get_xlim())
+
+            Safe_Data_induce = pd.DataFrame(data=z_induce, columns=x_ax, index=y_ax)
+            plt.figure(figsize=(16, 9), num="Danger Zone ( Use Induce Voltage Over 30kV to define zones )")
+            safe_zone_induce = sns.heatmap(Safe_Data_induce, cmap='OrRd', cbar=False)
+            safe_zone_induce.invert_yaxis()
+            safe_zone_induce.set(xlabel='Distance(m)', ylabel='High(m)', title=title_induce)
+            safe_zone_induce.vlines([post_pose1, post_pose2], *safe_zone_induce.get_xlim())
 
         plt.show()
 
@@ -612,11 +637,11 @@ class MainWindow(QMainWindow):
                 (xh, yh) = (0.6, 10.282)
                 (xi, yi) = (1.15, 10.282)
                 (r_a, theta_a) = (115000, 0)
-                (r_b, theta_b) = (115000, 0)
-                (r_c, theta_c) = (115000, 120)
-                (r_d, theta_d) = (115000, 120)
-                (r_e, theta_e) = (115000, -120)
-                (r_f, theta_f) = (115000, -120)
+                (r_b, theta_b) = (115000, 120)
+                (r_c, theta_c) = (115000, -120)
+                (r_d, theta_d) = (115000, -120)
+                (r_e, theta_e) = (115000, 120)
+                (r_f, theta_f) = (115000, 0)
                 (r_g, theta_g) = (22000, 0)
                 (r_h, theta_h) = (22000, -120)
                 (r_i, theta_i) = (22000, 120)

@@ -1,4 +1,4 @@
-# [การวิเคราะห์แรงดันไฟฟ้าเหนี่ยวนำที่เกิดจากสายส่งกำลังไฟฟ้า](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI)
+## การวิเคราะห์แรงดันไฟฟ้าเหนี่ยวนำที่เกิดจากสายส่งกำลังไฟฟ้า
 
 ANALYSIS OF THE INDUCED VOLTAGE GENERATED
 BY TRASMISSION LINE.
@@ -16,5 +16,5 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install require
 ### Command Line
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```

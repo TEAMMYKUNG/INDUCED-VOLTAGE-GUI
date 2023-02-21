@@ -14,7 +14,7 @@ BY TRASMISSION LINE.
 9 – Check Box Heatmap, Danger Zone Calculation .\
 
 ## Example Output
-#Induce Voltage & distance in specific high
+# Induce Voltage & distance in specific high
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Figure%201.png?raw=true)
 # Induced Voltage around transmission line using heatmap
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Healpmap.png?raw=true)

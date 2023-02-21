@@ -3,15 +3,15 @@
 ANALYSIS OF THE INDUCED VOLTAGE GENERATED
 BY TRASMISSION LINE.
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/raw/main/ui/images/2565-04-21%2011_39_36-Document1%20-%20Word.png?raw=true)
-1 – 115KV Transmission line type ( PEA Thailand ) 
-2 – Max Distance of calculation in Meter Unit
-3 – Max High of calulation in Meter Unit
-4 – Conductor Size in Meter Unit
-5 – Interest X -> Distanced from Center of Transmission line in Meter Unit
-6 – Interest Y -> High frome Center of Transmission line in Meter Unit
-7 – Calculate BTN
-8 – Menu Bar included Help & About Us 
-9 – Check Box Heatmap, Danger Zone Calculation
+1 – 115KV Transmission line type ( PEA Thailand ) .\
+2 – Max Distance of calculation in Meter Unit .\
+3 – Max High of calulation in Meter Unit .\
+4 – Conductor Size in Meter Unit .\
+5 – Interest X -> Distanced from Center of Transmission line in Meter Unit .\
+6 – Interest Y -> High frome Center of Transmission line in Meter Unit .\
+7 – Calculate BTN .\
+8 – Menu Bar included Help & About Us  .\
+9 – Check Box Heatmap, Danger Zone Calculation .\
 
 ##Example Output
 #Induce Voltage & distance in specific high

@@ -2,7 +2,7 @@
 
 ANALYSIS OF THE INDUCED VOLTAGE GENERATED
 BY TRASMISSION LINE.
-
+![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/raw/main/ui/images/2565-04-21%2011_39_36-Document1%20-%20Word.png?raw=true)
 
 ## การใช้งาน (Usage)
 สามารถเปิดโปรแกรมโดยใช้ Main.exe ได้เลย กรอกค่าให้เรียบร้อยเเล้วจึงกดปุ่มคำนวณ.\

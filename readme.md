@@ -13,14 +13,14 @@ BY TRASMISSION LINE.
 8 – Menu Bar included Help & About Us  .\
 9 – Check Box Heatmap, Danger Zone Calculation .\
 
-## Example Output
-# Induce Voltage & distance in specific high
+# Example Output
+## Induce Voltage & distance in specific high
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Figure%201.png?raw=true)
-# Induced Voltage around transmission line using heatmap
+## Induced Voltage around transmission line using heatmap
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Healpmap.png?raw=true)
-# Calculate Safe Zone via induced voltage ( Touching voltage 30kV )
+## Calculate Safe Zone via induced voltage ( Touching voltage 30kV )
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Danger%20Zone%20(%20Use%20Induce%20Voltage%20Over%2030kV%20to%20define%20zones%20).png?raw=true)
-# Calculate Safe Zone via current ( Let go current )
+## Calculate Safe Zone via current ( Let go current )
 ![alt text](https://github.com/TEAMMYKUNG/INDUCED-VOLTAGE-GUI/blob/main/example%20output/Case1_SS-TG-2/Danger%20Zone%20(%20Use%20Current%20to%20define%20zones%20).png?raw=true)
 
 
